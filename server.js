@@ -5,13 +5,21 @@ var fs = require('fs');
 http.createServer(function (req, res) {
   if (req.url == '/fileupload') {
     var form = new formidable.IncomingForm();
+    
+    res.setHeader('Access-Control-Allow-Origin', 'http://localhost:8000');
     form.parse(req, function (err, fields, files) {
-      var oldpath = files.file.path;
-      
-      if (err) throw err;
-      res.setHeader('Access-Control-Allow-Origin', 'http://localhost:8000');
-      res.write(`File uploaded: ${oldpath}`);
-      res.end();
+      if (err) {
+        res.statusCode = 400;
+        res.statusMessage = 'File upload failed';
+        res.write(JSON.stringify({errors: ['File is broken', 'Upload failed due to inconditional surcumstancies']}));
+        res.end();
+      } else {
+        var oldpath = files.file.path;
+        res.statusCode = 200;
+        res.statusMessage = 'Success';
+        res.write(`File uploaded: ${oldpath}`);
+        res.end();
+      };
     });
   } else {
     res.writeHead(200, {'Content-Type': 'text/html'});
