@@ -14,10 +14,23 @@ http.createServer(function (req, res) {
         res.write(JSON.stringify({errors: ['File is broken', 'Upload failed due to inconditional surcumstancies']}));
         res.end();
       } else {
-        var oldpath = files.file.path;
-        res.statusCode = 200;
-        res.statusMessage = 'Success';
-        res.write(`File uploaded: ${oldpath}`);
+        console.log("========================================");
+        console.log("fields:");
+        console.log(fields);
+        console.log("files:");
+        console.log(files);
+        console.log("========================================");
+        
+        if (files && files.file) {
+          var oldpath = files.file.path;
+          res.statusCode = 200;
+          res.statusMessage = 'Success';
+          res.write(`File uploaded: ${oldpath}; Fields: ${fields}`);
+        } else {
+          res.statusCode = 204;
+          res.statusMessage = 'Success';
+          res.write(`No files passed!`);
+        }
         res.end();
       };
     });
