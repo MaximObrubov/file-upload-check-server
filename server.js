@@ -1,38 +1,39 @@
 var http = require('http');
 var formidable = require('formidable');
 var fs = require('fs');
+const path = require('path');
+const os = require('os');
 
 http.createServer(function (req, res) {
   if (req.url == '/fileupload') {
-    var form = new formidable.IncomingForm();
+    var form = new formidable();
+    var file2beUploaded = null;
     
     res.setHeader('Access-Control-Allow-Origin', 'http://localhost:8000');
-    form.parse(req, function (err, fields, files) {
-      if (err) {
-        res.statusCode = 400;
-        res.statusMessage = 'File upload failed';
-        res.write(JSON.stringify({errors: ['File is broken', 'Upload failed due to inconditional surcumstancies']}));
-        res.end();
-      } else {
-        console.log("========================================");
-        console.log("fields:");
-        console.log(fields);
-        console.log("files:");
-        console.log(files);
-        console.log("========================================");
-        
-        if (files && files.file) {
-          var oldpath = files.file.path;
-          res.statusCode = 200;
-          res.statusMessage = 'Success';
-          res.write(`File uploaded: ${oldpath}; Fields: ${fields}`);
-        } else {
-          res.statusCode = 204;
-          res.statusMessage = 'Success';
-          res.write(`No files passed!`);
-        }
-        res.end();
-      };
+    form.parse(req);
+    form.on('fileBegin', (name, file) => {
+      file.path = path.join(os.tmpdir(), file.name);
+    });
+    form.on('file', function (name, file) {
+      file2beUploaded = file;
+      console.log("FILE DESCRIPTION:");
+      console.log(file2beUploaded.name);
+      console.log(file2beUploaded.path);
+      console.log(file2beUploaded.type);
+      console.log(file2beUploaded.flag);
+      console.log("FD END ---------------------------------\n\n");
+    });
+    form.on('err', (err) => {
+      res.statusCode = 500;
+      res.statusMessage = 'Internal server error';
+      res.write(err);
+      res.end();
+    });
+    form.on('end', () => {
+      res.statusCode = 200;
+      res.statusMessage = 'Success';
+      res.write(`File uploaded: ${file2beUploaded && file2beUploaded.name ? file2beUploaded.name : null }`);
+      res.end();
     });
   } else {
     res.writeHead(200, {'Content-Type': 'text/html'});
