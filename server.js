@@ -1,8 +1,11 @@
-var http = require('http');
-var formidable = require('formidable');
-var fs = require('fs');
+const http = require('http');
+const formidable = require('formidable');
+const fs = require('fs');
 const path = require('path');
+const cron = require('./cron');
 const os = require('os');
+
+cron.start();
 
 http.createServer(function (req, res) {
   if (req.url == '/fileupload') {

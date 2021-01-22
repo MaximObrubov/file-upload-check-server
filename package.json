@@ -10,6 +10,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "formidable": "^1.2.2"
+    "axios": "^0.21.1",
+    "formidable": "^1.2.2",
+    "node-cron": "^2.0.3"
   }
 }
