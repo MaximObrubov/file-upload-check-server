@@ -9,10 +9,10 @@ const URL_LIST = {
 
 module.exports = {
   start: () => {
-    cron.schedule('*/10 * * * * *', () => {
+    cron.schedule('*/40 * * * * *', () => {
       console.log(`Cron jon at ${Date()}`);
       
-      axios.get(URL_LIST.SYNC, {
+      axios.patch(URL_LIST.SYNC, null, {
         headers: {
           'Authorization': 'Bearer test-value'
         }
@@ -28,10 +28,10 @@ module.exports = {
 
     });
     
-    cron.schedule('*/10 * * * * *', () => {
+    cron.schedule('*/40 * * * * *', () => {
       console.log(`Apply cron job at ${Date()}`);
-      
-      axios.get(URL_LIST.APPLY, {
+    
+      axios.patch(URL_LIST.APPLY, null, {
         headers: {
           'Authorization': 'Bearer test-value'
         }
@@ -44,7 +44,7 @@ module.exports = {
         console.log(err.response);
         console.log("========================================");
       });
-
+    
     });
   }
 }
